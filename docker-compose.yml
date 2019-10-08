@@ -1,0 +1,31 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/golang/Dockerfile
+    ports:
+      - "8080:8080"
+    container_name: go-webap
+    depends_on:
+      - mysql
+  mysql:
+    build:
+      context: .
+      dockerfile: ./docker/mysql/Dockerfile
+    hostname: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Uzr5HfFGZ27p
+      MYSQL_USER: golang # 使わないけど一応記述
+      MYSQL_PASSWORD: golang # 使わないけど一応記述
+      MYSQL_DATABASE: golang # 使わないけど一応記述
+    container_name: mysql-container
+    volumes:
+      - "db-data:/var/lib/mysql"
+      # 初期設定を読み込む
+      - "./docker/mysql/my.conf:/etc/mysql/my.conf"
+      # MySQL起動時にDBを作成する
+      - "./docker/mysql/init/:/docker-entrypoint-initdb.d"
+volumes:
+  db-data:
+    driver: local
